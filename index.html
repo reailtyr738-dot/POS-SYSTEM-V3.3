@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="km">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+    <title>POS System - Made in Cambodia 🇰🇭</title>
+    <link href="https://fonts.googleapis.com/css2?family=Kantumruy+Pro:wght@300;400;500;600;700&family=Moul&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <style>
+        :root {
+            --blue-50: #eff6ff; --blue-100: #dbeafe; --blue-200: #bfdbfe; --blue-500: #3b82f6;
+            --blue-600: #2563eb; --blue-700: #1d4ed8; --blue-800: #1e40af; --blue-900: #1e3a5f;
+            --white: #ffffff; --gray-50: #f8fafc; --gray-100: #f1f5f9; --gray-200: #e2e8f0;
+            --gray-400: #94a3b8; --gray-500: #64748b; --gray-600: #475569; --gray-700: #334155;
+            --gray-800: #1e293b; --gray-900: #0f172a; --red-500: #ef4444; --green-500: #22c55e;
+            --radius-sm: 8px; --radius: 12px; --radius-lg: 16px; --radius-xl: 20px; --radius-2xl: 24px;
+        }
+        *{margin:0;padding:0;box-sizing:border-box}
+        body{font-family:'Kantumruy Pro',sans-serif;background:linear-gradient(135deg,#eff6ff,#dbeafe,#bfdbfe);min-height:100vh;color:#1e293b;padding-bottom:30px}
+        .footer-bar{text-align:center;padding:8px;background:linear-gradient(135deg,#1e3a5f,#2563eb);color:#fff;font-size:10px;font-weight:600;letter-spacing:2px;position:fixed;bottom:0;left:0;right:0;z-index:10000}
+        .login-container{display:flex;align-items:center;justify-content:center;min-height:100vh;padding:20px 15px 50px}
+        .login-card{background:#fff;border-radius:var(--radius-2xl);box-shadow:0 20px 40px rgba(0,0,0,.1);padding:40px 30px;width:100%;max-width:400px;border:1px solid #e2e8f0;transition:.3s}
+        .login-card:hover{box-shadow:0 0 40px rgba(59,130,246,.3);transform:translateY(-3px)}
+        .login-header{text-align:center;margin-bottom:30px}
+        .login-logo{width:65px;height:65px;background:linear-gradient(135deg,#3b82f6,#1d4ed8);border-radius:18px;display:flex;align-items:center;justify-content:center;margin:0 auto 15px;font-size:30px;color:#fff;box-shadow:0 8px 25px rgba(37,99,235,.3);transition:.3s}
+        .login-logo:hover{box-shadow:0 0 30px rgba(59,130,246,.5);transform:scale(1.05)}
+        .login-header h1{font-size:22px;font-weight:700;color:#1e293b}
+        .login-header p{color:#64748b;font-size:13px;margin-top:4px}
+        .input-group{margin-bottom:18px}
+        .input-group label{display:block;font-weight:600;font-size:13px;color:#475569;margin-bottom:6px}
+        .input-wrapper{position:relative}
+        .input-wrapper i{position:absolute;left:14px;top:50%;transform:translateY(-50%);color:#94a3b8;font-size:15px;transition:.3s}
+        .input-wrapper input{width:100%;padding:12px 14px 12px 42px;border:2px solid #e2e8f0;border-radius:var(--radius);font-size:14px;font-weight:500;color:#1e293b;background:#f8fafc;transition:.3s;outline:none}
+        .input-wrapper input:focus{border-color:#3b82f6;background:#fff;box-shadow:0 0 20px rgba(59,130,246,.3),0 0 0 4px rgba(59,130,246,.1)}
+        .input-wrapper input:focus+i{color:#3b82f6}
+        .btn-primary{width:100%;padding:13px;background:linear-gradient(135deg,#3b82f6,#2563eb);color:#fff;border:none;border-radius:var(--radius);font-size:15px;font-weight:700;cursor:pointer;transition:.3s;display:flex;align-items:center;justify-content:center;gap:8px;box-shadow:0 4px 15px rgba(37,99,235,.3)}
+        .btn-primary:hover{background:linear-gradient(135deg,#2563eb,#1d4ed8);transform:translateY(-2px);box-shadow:0 0 30px rgba(59,130,246,.6)}
+        .error-msg{background:#fef2f2;border:1px solid #fecaca;color:#dc2626;padding:10px 14px;border-radius:var(--radius-sm);font-size:12px;margin-bottom:15px;display:none;text-align:center}
+        .error-msg.show{display:block;animation:shake .5s}
+        @keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+        @keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+        @keyframes flyToCart{0%{transform:translate(0,0) scale(1);opacity:1}30%{transform:translate(var(--mid-x),var(--mid-y)) scale(1.5);opacity:1}100%{transform:translate(var(--end-x),var(--end-y)) scale(0.3);opacity:0.5}}
+        @keyframes cartBounce{0%,100%{transform:scale(1)}30%{transform:scale(1.3)}60%{transform:scale(0.9)}}
+        @keyframes spin{to{transform:rotate(360deg)}}
+        @keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(59,130,246,.4)}50%{box-shadow:0 0 0 12px rgba(59,130,246,0)}}
+        .flying-item{position:fixed;z-index:9999;pointer-events:none;animation:flyToCart .8s cubic-bezier(.25,.46,.45,.94) forwards;font-size:1.5rem;font-weight:700}
+        .cart-bouncing{animation:cartBounce .5s ease-out}
+        .sidebar{width:260px;background:#fff;border-right:1px solid #e2e8f0;position:fixed;left:0;top:0;bottom:30px;z-index:999;transition:.3s;display:flex;flex-direction:column;box-shadow:0 5px 20px rgba(0,0,0,.05)}
+        .sidebar.collapsed{width:70px}
+        .sidebar-logo{padding:20px;display:flex;align-items:center;gap:10px;border-bottom:1px solid #f1f5f9}
+        .sidebar-logo-icon{width:38px;height:38px;background:linear-gradient(135deg,#3b82f6,#2563eb);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;color:#fff;flex-shrink:0;transition:.3s}
+        .sidebar-logo-icon:hover{box-shadow:0 0 20px rgba(59,130,246,.5);transform:rotate(10deg)}
+        .sidebar-logo-text{font-size:17px;font-weight:700;color:#1e293b}
+        .sidebar.collapsed .sidebar-logo-text{display:none}
+        .sidebar-nav{flex:1;padding:15px;overflow-y:auto}
+        .nav-section{margin-bottom:20px}
+        .nav-label{font-size:10px;text-transform:uppercase;letter-spacing:2px;color:#94a3b8;margin-bottom:8px;padding:0 8px;font-weight:600}
+        .sidebar.collapsed .nav-label{display:none}
+        .nav-item{display:flex;align-items:center;gap:10px;padding:11px 14px;border-radius:var(--radius);cursor:pointer;margin-bottom:4px;color:#64748b;transition:.3s;font-size:14px;font-weight:500}
+        .nav-item:hover{background:#eff6ff;color:#2563eb;box-shadow:0 0 15px rgba(59,130,246,.15);transform:translateX(4px)}
+        .nav-item.active{background:linear-gradient(135deg,#3b82f6,#2563eb);color:#fff;box-shadow:0 0 25px rgba(59,130,246,.5)}
+        .nav-item i{font-size:16px;width:20px;text-align:center}
+        .sidebar.collapsed .nav-item .nav-text{display:none}
+        .badge{margin-left:auto;background:#ef4444;color:#fff;font-size:10px;padding:2px 7px;border-radius:15px;font-weight:600;animation:pulse 2s infinite}
+        .sidebar.collapsed .badge{display:none}
+        .sidebar-footer{padding:15px;border-top:1px solid #f1f5f9}
+        .user-card{display:flex;align-items:center;gap:10px;margin-bottom:10px;padding:8px;border-radius:var(--radius);cursor:pointer;transition:.3s}
+        .user-card:hover{background:#f8fafc}
+        .user-avatar{width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,#3b82f6,#1d4ed8);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px;color:#fff;transition:.3s}
+        .user-card:hover .user-avatar{box-shadow:0 0 20px rgba(59,130,246,.5);transform:scale(1.1)}
+        .btn-logout{background:#fef2f2;color:#ef4444;border:1px solid #fecaca;padding:8px 14px;border-radius:var(--radius-sm);cursor:pointer;font-size:12px;font-weight:600;display:flex;align-items:center;gap:6px;width:100%;justify-content:center;transition:.3s}
+        .btn-logout:hover{background:#ef4444;color:#fff;box-shadow:0 0 20px rgba(239,68,68,.4)}
+        .main-content{flex:1;margin-left:260px;transition:.3s;min-height:100vh}
+        .main-content.expanded{margin-left:70px}
+        .top-bar{background:#fff;padding:14px 20px;display:flex;align-items:center;justify-content:space-between;box-shadow:0 1px 3px rgba(0,0,0,.06);position:sticky;top:0;z-index:99;flex-wrap:wrap;gap:10px;border-bottom:1px solid #f1f5f9}
+        .breadcrumb{display:flex;align-items:center;gap:6px;font-size:13px;color:#64748b}
+        .breadcrumb .current{color:#1e293b;font-weight:600}
+        .page-content{padding:20px}
+        .page{display:none;animation:fadeIn .4s}
+        .page.active{display:block}
+        .card{background:#fff;border-radius:var(--radius-xl);box-shadow:0 4px 6px rgba(0,0,0,.07);padding:20px;margin-bottom:16px;border:1px solid #f1f5f9;transition:.3s}
+        .card:hover{box-shadow:0 0 25px rgba(59,130,246,.2)}
+        .stat-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin-bottom:16px}
+        .stat-card{background:#fff;border-radius:var(--radius-lg);padding:16px 18px;display:flex;align-items:center;gap:14px;box-shadow:0 1px 3px rgba(0,0,0,.06);border:1px solid #f1f5f9;transition:.3s;cursor:pointer}
+        .stat-card:hover{transform:translateY(-3px);box-shadow:0 0 20px rgba(59,130,246,.3);border-color:#bfdbfe}
+        .stat-icon{width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px;background:#eff6ff;color:#3b82f6;transition:.3s}
+        .stat-card:hover .stat-icon{transform:scale(1.1);box-shadow:0 0 15px rgba(59,130,246,.3)}
+        .stat-value{font-size:20px;font-weight:700;color:#1e293b}
+        .stat-label{font-size:11px;color:#64748b;margin-top:2px}
+        .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+        .form-label{font-weight:600;font-size:13px;color:#475569;margin-bottom:5px;display:block}
+        .form-input{width:100%;padding:10px 14px;border:2px solid #e2e8f0;border-radius:var(--radius-sm);font-size:13px;background:#f8fafc;transition:.3s;outline:none}
+        .form-input:focus{border-color:#3b82f6;box-shadow:0 0 20px rgba(59,130,246,.3),0 0 0 3px rgba(59,130,246,.1);background:#fff}
+        .btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:10px 16px;border-radius:var(--radius-sm);font-weight:600;font-size:13px;cursor:pointer;transition:.3s;border:none}
+        .btn-blue{background:linear-gradient(135deg,#3b82f6,#2563eb);color:#fff;box-shadow:0 2px 10px rgba(37,99,235,.3)}
+        .btn-blue:hover{background:linear-gradient(135deg,#2563eb,#1d4ed8);transform:translateY(-2px);box-shadow:0 0 30px rgba(59,130,246,.6)}
+        .btn-white{background:#fff;color:#1e293b;border:2px solid #e2e8f0}
+        .btn-white:hover{background:#f8fafc;border-color:#3b82f6;box-shadow:0 0 15px rgba(59,130,246,.2)}
+        .btn-red{background:linear-gradient(135deg,#ef4444,#dc2626);color:#fff;font-size:11px;padding:6px 10px}
+        .btn-red:hover{box-shadow:0 0 20px rgba(239,68,68,.4)}
+        .btn-telegram{background:linear-gradient(135deg,#08c,#069);color:#fff;box-shadow:0 2px 10px rgba(0,136,204,.3)}
+        .btn-telegram:hover{box-shadow:0 0 25px rgba(0,136,204,.5)}
+        .cart-item{display:flex;justify-content:space-between;align-items:center;padding:10px 12px;background:#f8fafc;border-radius:var(--radius-sm);margin-bottom:6px;font-size:13px;transition:.2s}
+        .cart-item:hover{background:#eff6ff;box-shadow:0 0 10px rgba(59,130,246,.1);transform:translateX(3px)}
+        .cart-total{display:flex;justify-content:space-between;padding:12px;background:#eff6ff;border-radius:var(--radius-sm);margin-bottom:10px;font-weight:700;transition:.3s}
+        .cart-total:hover{box-shadow:0 0 15px rgba(59,130,246,.2)}
+        .delivery-card{max-width:500px;margin:0 auto;background:#fff;border-radius:var(--radius-2xl);box-shadow:0 15px 30px rgba(0,0,0,.1);padding:28px 24px;border:1px solid #f1f5f9;transition:.3s}
+        .delivery-card:hover{box-shadow:0 0 30px rgba(59,130,246,.3)}
+        .delivery-title{text-align:center;margin-bottom:24px}
+        .delivery-title h2{font-family:'Moul',cursive;font-size:30px;font-weight:700;color:#1e293b;text-transform:uppercase}
+        .delivery-title span{font-style:italic;font-size:14px;color:#64748b;background:#f1f5f9;padding:4px 12px;border-radius:20px}
+        .delivery-row{display:flex;align-items:center;margin-bottom:14px;background:#f8fafc;border-radius:var(--radius);padding:6px 14px;border:1px solid #e2e8f0;transition:.3s}
+        .delivery-row:focus-within{border-color:#3b82f6;box-shadow:0 0 15px rgba(59,130,246,.2)}
+        .delivery-row label{font-weight:600;font-size:13px;color:#1e293b;min-width:110px;display:flex;align-items:center;gap:6px}
+        .delivery-row input{flex:1;border:none;background:0 0;padding:10px 6px;font-size:14px;color:#1e293b;outline:none}
+        .option-label{display:flex;align-items:center;gap:8px;font-size:12px;font-weight:500;color:#334155;cursor:pointer;padding:8px 10px;border-radius:8px;transition:.2s;width:100%}
+        .option-label:hover{background:rgba(59,130,246,.08);color:#2563eb}
+        .option-label input[type=checkbox]{accent-color:#2563eb;width:16px;height:16px;margin:0;flex-shrink:0}
+        .graph-bar{transition:.5s;border-radius:6px;min-height:3px;background:linear-gradient(180deg,#3b82f6,#2563eb);box-shadow:0 2px 8px rgba(59,130,246,.3)}
+        .graph-bar:hover{box-shadow:0 0 20px rgba(59,130,246,.5);filter:brightness(1.1)}
+        .table{width:100%;border-collapse:collapse;font-size:12px}
+        .table th{background:#f8fafc;padding:10px 12px;text-align:left;font-weight:600;color:#64748b;border-bottom:2px solid #e2e8f0}
+        .table td{padding:10px 12px;border-bottom:1px solid #f1f5f9;color:#475569}
+        .table tr:hover td{background:#f8fafc;box-shadow:0 0 10px rgba(59,130,246,.1)}
+        .loading-spinner{display:inline-block;width:16px;height:16px;border:3px solid rgba(255,255,255,.3);border-radius:50%;border-top-color:#fff;animation:spin .8s linear infinite}
+        body.dark-mode{background:linear-gradient(135deg,#0f172a,#1e293b,#0f172a)}
+        body.dark-mode .footer-bar{background:linear-gradient(135deg,#0f172a,#1e3a5f)}
+        body.dark-mode .sidebar{background:#1e293b;border-color:#334155}
+        body.dark-mode .sidebar-logo-text{color:#e2e8f0}
+        body.dark-mode .nav-item{color:#94a3b8}
+        body.dark-mode .nav-item:hover{background:#1e3a5f;color:#93c5fd}
+        body.dark-mode .card,.dark-mode .stat-card,.dark-mode .delivery-card{background:#1e293b;border-color:#334155}
+        body.dark-mode .top-bar{background:#1e293b;border-color:#334155}
+        body.dark-mode .form-input,.dark-mode .delivery-row,.dark-mode input{background:#0f172a;color:#e2e8f0;border-color:#475569}
+        body.dark-mode .cart-item{background:#0f172a}
+        body.dark-mode .cart-item:hover{background:#1e3a5f}
+        body.dark-mode .cart-total{background:#1e3a5f}
+        body.dark-mode .stat-icon{background:#1e3a5f}
+        body.dark-mode .table th{background:#1e293b;color:#94a3b8;border-color:#475569}
+        body.dark-mode .table td{color:#cbd5e1;border-color:#334155}
+        body.dark-mode .delivery-title h2{color:#e2e8f0}
+        body.dark-mode .login-header h1{color:#e2e8f0}
+        @media(max-width:1024px){.sidebar{transform:translateX(-100%);width:260px}.sidebar.mobile-open{transform:translateX(0)}.main-content{margin-left:0!important}.top-bar{padding-left:50px}}
+        @media(max-width:768px){.page-content{padding:12px}.form-grid{grid-template-columns:1fr}.delivery-card{padding:18px 14px}.stat-row{grid-template-columns:1fr 1fr}}
+        @media(max-width:480px){.stat-row{grid-template-columns:1fr}.delivery-row{flex-direction:column;align-items:flex-start}.delivery-row label{margin-bottom:4px}.delivery-row input{width:100%}}
+        @media print{body *{visibility:hidden}.page.active,.page.active *{visibility:visible}.page.active{position:absolute;left:0;top:0;width:100%}.no-print,.sidebar,.top-bar,.footer-bar{display:none!important}.main-content{margin-left:0!important}}
+    </style>
+</head>
+<body>
+    <div id="login-page" class="login-container">
+        <div class="login-card">
+            <div class="login-header"><div class="login-logo"><i class="fas fa-store"></i></div><h1>POS System</h1><p>សូមចូលប្រើប្រាស់ប្រព័ន្ធ</p></div>
+            <div class="error-msg" id="login-error"></div>
+            <div class="input-group"><label>ឈ្មោះអ្នកប្រើប្រាស់</label><div class="input-wrapper"><i class="fas fa-user"></i><input type="text" id="login-username" placeholder="បញ្ចូលឈ្មោះ" autocomplete="off"></div></div>
+            <div class="input-group"><label>ពាក្យសម្ងាត់</label><div class="input-wrapper"><i class="fas fa-lock"></i><input type="password" id="login-password" placeholder="បញ្ចូលពាក្យសម្ងាត់"></div></div>
+            <button class="btn-primary" id="login-submit-btn" onclick="handleLogin()"><i class="fas fa-sign-in-alt"></i> ចូលប្រើប្រាស់</button>
+        </div>
+    </div>
+
+    <div id="dashboard-container" style="display:none;">
+        <div style="display:flex;min-height:100vh">
+            <div id="sidebar-overlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:998" onclick="closeSidebar()"></div>
+            <aside class="sidebar" id="sidebar">
+                <div class="sidebar-logo"><div class="sidebar-logo-icon"><i class="fas fa-cubes"></i></div><span class="sidebar-logo-text">DASHBOARD</span></div>
+                <nav class="sidebar-nav" id="sidebar-nav"></nav>
+                <div class="sidebar-footer">
+                    <div class="user-card"><div class="user-avatar" id="user-avatar-letter">A</div><div><p style="font-weight:600;font-size:13px" id="user-display-name">Admin</p><p style="font-size:10px;color:#94a3b8" id="user-role-display">Administrator</p></div></div>
+                    <button class="btn-logout" onclick="handleLogout()"><i class="fas fa-sign-out-alt"></i> ចាកចេញ</button>
+                </div>
+            </aside>
+            <main class="main-content" id="mainContent">
+                <div class="top-bar no-print">
+                    <div style="display:flex;align-items:center;gap:10px"><button id="mobileMenuBtn" style="width:34px;height:34px;border-radius:8px;border:none;background:#f1f5f9;cursor:pointer;display:none;font-size:16px" onclick="openSidebar()"><i class="fas fa-bars"></i></button><div class="breadcrumb"><i class="fas fa-home"></i><i class="fas fa-chevron-right"></i><span class="current" id="breadcrumbTitle">POS System</span></div></div>
+                    <div style="display:flex;align-items:center;gap:12px"><span style="font-size:13px;color:#64748b">💰 លក់ថ្ងៃនេះ: <strong style="color:#2563eb" id="top-today-sales">0៛</strong></span></div>
+                </div>
+                <div class="page-content">
+                    <div class="page active" id="pos-page">
+                        <div class="stat-row" id="pos-stats-row"></div>
+                        <div class="card"><div class="form-grid">
+                            <div><h3 style="font-size:16px;font-weight:700;margin-bottom:14px"><i class="fas fa-plus-circle" style="color:#3b82f6;margin-right:6px"></i>បញ្ចូលទំនិញ</h3><div style="margin-bottom:10px"><label class="form-label">ឈ្មោះទំនិញ</label><input class="form-input" type="text" id="item-name" placeholder="ឧទាហរណ៍៖ Espresso..."></div><div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px"><div><label class="form-label">តម្លៃ (៛)</label><input class="form-input" type="number" id="item-price" step="100" placeholder="0" style="font-weight:700"></div><div><label class="form-label">ចំនួន</label><input class="form-input" type="number" id="item-qty" value="1" min="1" style="text-align:center;font-weight:700"></div></div><button class="btn btn-blue" style="width:100%;padding:12px" id="add-item-btn"><i class="fas fa-cart-plus"></i> បន្ថែមចូលកន្ត្រក</button></div>
+                            <div><h3 style="font-size:16px;font-weight:700;margin-bottom:14px"><i class="fas fa-shopping-cart" style="color:#3b82f6;margin-right:6px" id="cart-icon"></i>កន្ត្រកទំនិញ <span id="cart-count" style="font-size:11px;background:#f1f5f9;padding:3px 8px;border-radius:15px;color:#64748b;font-weight:400">0 មុខ</span></h3><div id="cart-items" style="max-height:200px;overflow-y:auto;margin-bottom:10px"><div style="text-align:center;padding:30px;color:#94a3b8;font-size:13px">មិនទាន់មានទំនិញ</div></div><div class="cart-total"><span>សរុបទាំងអស់</span><span id="cart-total" style="font-size:18px;color:#2563eb">0៛</span></div><div style="background:#f8fafc;border-radius:8px;padding:10px;margin-bottom:10px"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px"><span style="font-size:11px;font-weight:600;color:#64748b">ប្រាក់ទទួល (៛)</span><input class="form-input" type="number" id="cash-received" step="100" placeholder="0" style="width:100px;text-align:right;padding:6px 8px" oninput="calculateChange()"></div><div style="display:flex;justify-content:space-between;border-top:1px solid #e2e8f0;padding-top:6px"><span style="font-size:11px;font-weight:600;color:#64748b">ប្រាក់អាប់</span><span id="cash-change" style="font-weight:900;color:#22c55e;font-size:14px">0៛</span></div></div><div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px" id="pos-action-buttons"></div></div>
+                        </div></div>
+                    </div>
+                    <div class="page" id="delivery-page"></div>
+                    <div class="page" id="dashboard-page"></div>
+                    <div class="page" id="login-device-page"></div>
+                    <div class="page" id="history-page"></div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <div id="receipt-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:9999;align-items:center;justify-content:center;padding:12px">
+        <div style="background:#fff;width:100%;max-width:360px;border-radius:20px;overflow:hidden;box-shadow:0 20px 40px rgba(0,0,0,.2)">
+            <div style="background:linear-gradient(135deg,#3b82f6,#1d4ed8);padding:10px 16px;color:#fff;display:flex;justify-content:space-between;align-items:center" class="no-print"><span style="font-weight:700;font-size:13px">🧾 វិក្កយបត្រ</span><button style="background:rgba(255,255,255,.2);border:none;color:#fff;width:26px;height:26px;border-radius:50%;cursor:pointer;font-size:16px" onclick="closeReceipt()">&times;</button></div>
+            <div style="padding:24px" id="print-area"><div style="text-align:center;margin-bottom:18px"><h2 style="font-size:18px;font-weight:700">RECEIPT</h2><p style="font-size:10px;color:#64748b" id="receipt-number">Order: POS-8829-01</p><p style="font-size:10px;color:#64748b" id="receipt-date">2023-10-24 14:30:05</p></div><div style="display:flex;justify-content:space-between;font-size:10px;font-weight:700;color:#64748b;border-bottom:1px solid #e2e8f0;padding-bottom:3px;margin-bottom:6px"><span>Item</span><span>Total</span></div><div id="receipt-items-list" style="font-size:12px;margin-bottom:18px"></div><div style="display:flex;justify-content:space-between;font-weight:700;border-top:1px solid #e2e8f0;padding-top:10px;margin-bottom:14px"><span>Total</span><span id="receipt-total">0៛</span></div><div style="font-size:10px;color:#64748b"><div style="display:flex;justify-content:space-between"><span>Payment</span><span style="font-weight:600">Cash</span></div><div style="display:flex;justify-content:space-between"><span>Paid</span><span style="font-weight:600" id="receipt-received">0៛</span></div><div style="display:flex;justify-content:space-between;font-weight:700;padding-top:3px"><span>Change</span><span id="receipt-change">0៛</span></div></div><p style="text-align:center;font-size:10px;color:#94a3b8;margin-top:20px">Thank you for your business!</p></div>
+            <div style="padding:14px;background:#f8fafc;border-top:1px solid #e2e8f0;display:grid;grid-template-columns:repeat(3,1fr);gap:6px" class="no-print">
+                <button class="btn btn-blue" style="font-size:10px;padding:7px" onclick="shareReceiptWhatsApp()"><i class="fab fa-whatsapp"></i></button>
+                <button class="btn btn-telegram" style="font-size:10px;padding:7px" id="share-telegram-btn" onclick="shareReceiptTelegram()"><i class="fab fa-telegram-plane"></i></button>
+                <button class="btn btn-blue" style="font-size:10px;padding:7px" onclick="shareReceiptMessenger()"><i class="fab fa-facebook-messenger"></i></button>
+                <button class="btn btn-blue" style="font-size:10px;padding:8px;grid-column:span 2" onclick="copyReceipt()"><i class="fas fa-copy"></i> ចម្លង</button>
+                <button class="btn btn-blue" style="font-size:10px;padding:8px" onclick="printReceipt()"><i class="fas fa-print"></i> បោះពុម្ព</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer-bar">MADE IN CAMBODIA</div>
+
+    <script>
+    // ============ CONFIG ============
+    const JSONBIN_API_KEY = '$2a$10$o.FT1VzcHhTM5JrlL77CH.iLNrNVvRzuPMA8zAI.2pJi79/IPM6/W';
+    const JSONBIN_BIN_ID = '6a65e6e7da38895dfe9174b6';
+    const JSONBIN_URL = 'https://api.jsonbin.io/v3/b/' + JSONBIN_BIN_ID;
+
+    let currentUser=null;
+    let machineId=localStorage.getItem('POS_mId')||('M-'+Math.random().toString(36).substr(2,5).toUpperCase());
+    localStorage.setItem('POS_mId',machineId);
+    let cart=[],totalSalesToday=0,salesHistory=[],customerData={},loginHistory=[],currentTotal=0,currentReceiptData={},isDark=!1;
+    const U={cashier:{password:'cashier123',role:'cashier',displayName:'Cashier'},admin:{password:'admin123',role:'admin',displayName:'Admin'}};
+    const P='POS_';
+    const ch=new BroadcastChannel('pos_channel');
+
+    function F(n){return n.toLocaleString('km-KH')+'៛'}
+    function T(){return new Date().toISOString().split('T')[0]}
+    function R(){return'POS-'+Math.floor(1000+Math.random()*9000)+'-'+machineId.substr(-3)}
+    function N(){let d=new Date();return`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')} ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}:${String(d.getSeconds()).padStart(2,'0')}`}
+    function notify(m){let e=document.createElement('div');e.style.cssText='position:fixed;top:10px;right:12px;background:#2563eb;color:#fff;padding:8px 14px;border-radius:10px;font-size:12px;font-weight:600;z-index:10000;box-shadow:0 4px 15px rgba(37,99,235,.3)';e.innerText=m;document.body.appendChild(e);setTimeout(()=>e.remove(),2500)}
+
+    function LK(k){return P+k}
+    function LS(){localStorage.setItem(LK('ts'),totalSalesToday);localStorage.setItem(LK('sh'),JSON.stringify(salesHistory));localStorage.setItem(LK('lh'),JSON.stringify(loginHistory));localStorage.setItem(LK('cd'),JSON.stringify(customerData));localStorage.setItem(LK('dk'),isDark)}
+    function LL(){totalSalesToday=parseFloat(localStorage.getItem(LK('ts')))||0;salesHistory=JSON.parse(localStorage.getItem(LK('sh')))||[];loginHistory=JSON.parse(localStorage.getItem(LK('lh')))||[];customerData=JSON.parse(localStorage.getItem(LK('cd')))||{};isDark=localStorage.getItem(LK('dk'))==='true'}
+    LL();
+
+    ch.onmessage=function(e){if(e.data.mid===machineId)return;LL();RU();if(currentUser?.role==='admin'){UL();if(document.getElementById('dashboard-page').classList.contains('active'))UD();if(document.getElementById('history-page').classList.contains('active'))UH()}};
+    function BC(t,d){ch.postMessage({type:t,data:d,mid:machineId,timestamp:Date.now()})}
+
+    function SS(u){let s={username:u.username,role:u.role,displayName:u.displayName,machineId,timestamp:Date.now()};localStorage.setItem(LK('ss_'+machineId),JSON.stringify(s))}
+    function GS(){try{let d=localStorage.getItem(LK('ss_'+machineId));if(d){let s=JSON.parse(d);if(s.timestamp&&(Date.now()-s.timestamp<86400000))return s}}catch(e){}return null}
+    function CS(){localStorage.removeItem(LK('ss_'+machineId))}
+    function CND(){let lastDay=localStorage.getItem(LK('lastDay'));let today=T();if(lastDay!==today){totalSalesToday=0;customerData={};localStorage.setItem(LK('lastDay'),today);RU()}}
+
+    function IA(){let s=GS();if(s){currentUser={username:s.username,role:s.role,displayName:s.displayName};document.getElementById('login-page').style.display='none';document.getElementById('dashboard-container').style.display='block';document.getElementById('user-avatar-letter').innerText=s.displayName.charAt(0).toUpperCase();document.getElementById('user-display-name').innerText=s.displayName;document.getElementById('user-role-display').innerText=s.role==='admin'?'Administrator':'Cashier';SU();RU();AT();setTimeout(LDD,300)}}
+
+    window.openSidebar=function(){let sb=document.getElementById('sidebar');let ov=document.getElementById('sidebar-overlay');sb.classList.add('mobile-open');if(window.innerWidth<=1024){ov.style.display='block';setTimeout(()=>{ov.style.opacity='1'},10)}}
+    window.closeSidebar=function(){let sb=document.getElementById('sidebar');let ov=document.getElementById('sidebar-overlay');sb.classList.remove('mobile-open');ov.style.opacity='0';setTimeout(()=>{ov.style.display='none'},300)}
+
+    window.handleLogin=function(){
+        let u=document.getElementById('login-username').value.trim().toLowerCase();let p=document.getElementById('login-password').value;let er=document.getElementById('login-error');
+        if(!u||!p){er.innerHTML='សូមបំពេញគ្រប់ចន្លោះ!';er.classList.add('show');setTimeout(()=>er.classList.remove('show'),3000);return}
+        let user=U[u];if(!user||user.password!==p){er.innerHTML='ឈ្មោះឬពាក្យសម្ងាត់មិនត្រឹមត្រូវ!';er.classList.add('show');setTimeout(()=>er.classList.remove('show'),3000);return}
+        currentUser={username:u,role:user.role,displayName:user.displayName};SS(currentUser);
+        document.getElementById('login-page').style.display='none';document.getElementById('dashboard-container').style.display='block';
+        document.getElementById('user-avatar-letter').innerText=user.displayName.charAt(0).toUpperCase();
+        document.getElementById('user-display-name').innerText=user.displayName;
+        document.getElementById('user-role-display').innerText=user.role==='admin'?'Administrator':'Cashier';
+        loginHistory.push({username:u,role:user.role,displayName:user.displayName,action:'login',time:N(),machineId});
+        LS();BC('login',{});SU();RU();AT();setTimeout(LDD,300);CND();
+    };
+
+    window.handleLogout=function(){if(currentUser)loginHistory.push({username:currentUser.username,role:currentUser.role,displayName:currentUser.displayName,action:'logout',time:N(),machineId});LS();BC('logout',{});CS();currentUser=null;cart=[];document.getElementById('login-page').style.display='flex';document.getElementById('dashboard-container').style.display='none';document.getElementById('login-username').value='';document.getElementById('login-password').value=''};
+    window.toggleSidebar=function(){let sb=document.getElementById('sidebar');let mc=document.getElementById('mainContent');sb.classList.toggle('collapsed');mc.classList.toggle('expanded')};
+
+    window.SP=function(p,n){document.querySelectorAll('.page').forEach(x=>x.classList.remove('active'));document.getElementById(p).classList.add('active');document.querySelectorAll('.nav-item').forEach(x=>x.classList.remove('active'));if(n)n.classList.add('active');let t={pos:'POS System',delivery:'Delivery Note',dash:'Statistics Charts',loginDev:'Login Device',history:'Sales History'};document.getElementById('breadcrumbTitle').innerText=t[p]||'POS System';if(p==='history-page')UH();if(p==='dashboard-page')UD();if(p==='login-device-page')UL();if(window.innerWidth<=1024)closeSidebar()};
+
+    function SU(){let nav=document.getElementById('sidebar-nav');let st=document.getElementById('pos-stats-row');let bt=document.getElementById('pos-action-buttons');
+        if(currentUser.role==='admin'){nav.innerHTML=`<div class="nav-section"><div class="nav-label">Main Menu</div><a class="nav-item active" data-page="pos-page" onclick="SP('pos-page',this)"><i class="fas fa-cash-register"></i><span class="nav-text">POS System</span></a><a class="nav-item" data-page="delivery-page" onclick="SP('delivery-page',this)"><i class="fas fa-truck"></i><span class="nav-text">Delivery Note</span></a><a class="nav-item" data-page="dashboard-page" onclick="SP('dashboard-page',this);UD()"><i class="fas fa-chart-pie"></i><span class="nav-text">Statistics Charts</span></a><a class="nav-item" data-page="login-device-page" onclick="SP('login-device-page',this);UL()"><i class="fas fa-laptop"></i><span class="nav-text">Login Device</span></a></div><div class="nav-section"><div class="nav-label">History</div><a class="nav-item" data-page="history-page" onclick="SP('history-page',this);UH()"><i class="fas fa-history"></i><span class="nav-text">Sales History</span><span class="badge" id="history-count">0</span></a></div><div class="nav-section"><div class="nav-label">Settings</div><a class="nav-item" onclick="toggleDarkMode()"><i class="fas fa-moon" id="themeIcon"></i><span class="nav-text">Dark Mode</span></a></div>`;st.innerHTML=`<div class="stat-card"><div class="stat-icon"><i class="fas fa-shopping-cart"></i></div><div><div class="stat-value" id="stat-cart-items">0</div><div class="stat-label">ទំនិញក្នុងកន្ត្រក</div></div></div><div class="stat-card"><div class="stat-icon"><i class="fas fa-dollar-sign"></i></div><div><div class="stat-value" id="stat-today-sales">0៛</div><div class="stat-label">សរុបថ្ងៃនេះ</div></div></div><div class="stat-card"><div class="stat-icon"><i class="fas fa-receipt"></i></div><div><div class="stat-value" id="stat-receipts">0</div><div class="stat-label">វិក័យប័ត្រ</div></div></div><div class="stat-card"><div class="stat-icon"><i class="fas fa-users"></i></div><div><div class="stat-value" id="stat-customers">0</div><div class="stat-label">អតិថិជន</div></div></div>`;bt.innerHTML=`<button class="btn btn-blue" style="grid-column:span 3;padding:9px;font-size:11px" onclick="checkout()"><i class="fas fa-check-circle"></i> ទូទាត់ប្រាក់</button><button class="btn btn-blue" style="padding:7px;font-size:11px" onclick="SP('history-page',document.querySelector('[data-page=history-page]'));UH()"><i class="fas fa-history"></i> ប្រវត្តិ</button><button class="btn btn-white" style="padding:7px;font-size:11px" onclick="clearCart()"><i class="fas fa-trash-alt"></i> សម្អាត</button><button class="btn btn-blue" style="padding:7px;font-size:11px" onclick="printReceipt()"><i class="fas fa-print"></i> បោះពុម្ព</button>`;BDP();BSP();BLP();BHP();}
+        else{nav.innerHTML=`<div class="nav-section"><div class="nav-label">Main Menu</div><a class="nav-item active" data-page="pos-page" onclick="SP('pos-page',this)"><i class="fas fa-cash-register"></i><span class="nav-text">POS System</span></a><a class="nav-item" data-page="delivery-page" onclick="SP('delivery-page',this)"><i class="fas fa-truck"></i><span class="nav-text">Delivery Note</span></a></div><div class="nav-section"><div class="nav-label">Settings</div><a class="nav-item" onclick="toggleDarkMode()"><i class="fas fa-moon" id="themeIcon"></i><span class="nav-text">Dark Mode</span></a></div>`;st.innerHTML='';bt.innerHTML=`<button class="btn btn-blue" style="grid-column:span 3;padding:9px;font-size:11px" onclick="checkout()"><i class="fas fa-check-circle"></i> ទូទាត់ប្រាក់</button><button class="btn btn-white" style="grid-column:span 3;padding:7px;font-size:11px" onclick="clearCart()"><i class="fas fa-trash-alt"></i> សម្អាត</button>`;BDP();document.getElementById('dashboard-page').innerHTML='';document.getElementById('login-device-page').innerHTML='';document.getElementById('history-page').innerHTML='';}}
+
+    document.getElementById('add-item-btn').addEventListener('click',function(){
+        let n=document.getElementById('item-name').value.trim();let p=parseFloat(document.getElementById('item-price').value);let q=parseInt(document.getElementById('item-qty').value);
+        if(!n||isNaN(p)||p<=0||isNaN(q)||q<=0){notify('សូមបំពេញព័ត៌មានឲ្យបានត្រឹមត្រូវ!');return}
+        let btnRect=this.getBoundingClientRect();let cartIcon=document.getElementById('cart-icon');let cartRect=cartIcon.getBoundingClientRect();
+        let startX=btnRect.left+btnRect.width/2;let startY=btnRect.top;let endX=cartRect.left+cartRect.width/2-startX;let endY=cartRect.top+cartRect.height/2-startY;
+        let fly=document.createElement('div');fly.className='flying-item';fly.style.left=startX+'px';fly.style.top=startY+'px';
+        fly.style.setProperty('--mid-x',(endX*.5)+'px');fly.style.setProperty('--mid-y',(endY*.3-50)+'px');fly.style.setProperty('--end-x',endX+'px');fly.style.setProperty('--end-y',endY+'px');
+        if(n.length>8){fly.innerHTML='<i class="fas fa-box" style="color:#2563eb;font-size:1.8rem"></i>'}
+        else{fly.textContent=n;fly.style.color='#2563eb';fly.style.background='#fff';fly.style.padding='4px 12px';fly.style.borderRadius='20px';fly.style.boxShadow='0 4px 15px rgba(37,99,235,.3)'}
+        document.body.appendChild(fly);let cartContainer=document.getElementById('cart-icon').parentElement;
+        setTimeout(()=>{cartContainer.style.transform='scale(1.3)';cartContainer.style.transition='transform .3s';setTimeout(()=>{cartContainer.style.transform='scale(1)'},200)},600);
+        setTimeout(()=>fly.remove(),800);
+        let ex=cart.find(i=>i.name.toLowerCase()===n.toLowerCase());if(ex)ex.qty+=q;else cart.push({name:n,price:p,qty:q});
+        document.getElementById('item-name').value='';document.getElementById('item-price').value='';document.getElementById('item-qty').value='1';UC();RU();
+    });
+
+    window.clearCart=function(){cart=[];document.getElementById('cash-received').value='';UC();RU()};
+    window.checkout=function(){if(cart.length===0)return;let r=parseFloat(document.getElementById('cash-received').value)||currentTotal;if(r<currentTotal){notify('ប្រាក់ទទួលមិនគ្រប់គ្រាន់!');return}totalSalesToday+=currentTotal;let ts=N();let chg=r-currentTotal;let rid=R();salesHistory.unshift({id:rid,time:ts,items:[...cart],total:currentTotal,received:r,change:chg,machine:machineId,cn:currentUser.displayName});LS();BC('checkout',{cn:currentUser.displayName,t:currentTotal});currentReceiptData={number:rid,time:ts,items:[...cart],total:currentTotal,received:r,change:chg>0?chg:0};document.getElementById('receipt-number').innerText='Order: '+rid;document.getElementById('receipt-date').innerText=ts;document.getElementById('receipt-total').innerText=F(currentTotal);document.getElementById('receipt-received').innerText=F(r);document.getElementById('receipt-change').innerText=F(chg>0?chg:0);let il=document.getElementById('receipt-items-list');il.innerHTML='';cart.forEach(i=>{let row=document.createElement('div');row.style.cssText='display:flex;justify-content:space-between;margin-bottom:5px;font-size:11px';row.innerHTML=`<span>${i.qty} x ${i.name}</span><span style="font-weight:600">${F(i.price*i.qty)}</span>`;il.appendChild(row)});document.getElementById('receipt-modal').style.display='flex';cart=[];document.getElementById('cash-received').value='';UC();RU()};
+    window.calculateChange=function(){let r=parseFloat(document.getElementById('cash-received').value)||0;document.getElementById('cash-change').innerText=(r>=currentTotal&&currentTotal>0)?F(r-currentTotal):'0៛'};
+
+    function UC(){let c=document.getElementById('cart-items');c.innerHTML='';if(cart.length===0){c.innerHTML='<div style="text-align:center;padding:25px;color:#94a3b8;font-size:12px">មិនទាន់មានទំនិញ</div>';document.getElementById('cart-total').innerText='0៛';currentTotal=0;document.getElementById('cart-count').innerText='0 មុខ';document.getElementById('cash-change').innerText='0៛';return}currentTotal=0;cart.forEach((i,idx)=>{let t=i.price*i.qty;currentTotal+=t;let d=document.createElement('div');d.className='cart-item';d.innerHTML=`<div><strong>${i.name}</strong><br><span style="font-size:10px;color:#94a3b8">${i.qty} × ${F(i.price)}</span></div><div style="display:flex;align-items:center;gap:6px"><span style="font-weight:700;color:#2563eb">${F(t)}</span><button style="background:none;border:none;color:#ef4444;cursor:pointer;font-size:14px;padding:2px" onclick="removeCartItem(${idx})"><i class="fas fa-times-circle"></i></button></div>`;c.appendChild(d)});document.getElementById('cart-total').innerText=F(currentTotal);document.getElementById('cart-count').innerText=cart.length+' មុខ';calculateChange()}
+    window.removeCartItem=function(i){cart.splice(i,1);UC();RU()};
+    function RU(){document.getElementById('top-today-sales').innerText=F(totalSalesToday);if(currentUser?.role==='admin'){document.getElementById('stat-today-sales').innerText=F(totalSalesToday);document.getElementById('stat-cart-items').innerText=cart.length;document.getElementById('stat-receipts').innerText=salesHistory.length;document.getElementById('history-count').innerText=salesHistory.length;document.getElementById('stat-customers').innerText=Object.values(customerData).reduce((s,c)=>s+c,0)||0}}
+
+    window.closeReceipt=function(){document.getElementById('receipt-modal').style.display='none'};
+    window.printReceipt=function(){window.print()};
+    window.copyReceipt=function(){let d=currentReceiptData;let t='RECEIPT\nOrder: '+d.number+'\n';d.items.forEach(i=>t+=i.qty+'x '+i.name+' '+F(i.price*i.qty)+'\n');t+='Total: '+F(d.total);navigator.clipboard.writeText(t);notify('ចម្លងរួចរាល់!')};
+    window.shareReceiptWhatsApp=function(){let d=currentReceiptData;if(!d||!d.number)return;window.open('https://wa.me/?text='+encodeURIComponent('Receipt '+d.number+' Total: '+F(d.total)),'_blank')};
+    window.shareReceiptMessenger=function(){let d=currentReceiptData;if(!d||!d.number)return;window.open('fb-messenger://share?link=&text='+encodeURIComponent('Receipt '+d.number),'_blank')};
+    window.shareReceiptTelegram=function(){var btn=document.getElementById('share-telegram-btn');var d=currentReceiptData;if(!d||!d.number){notify('មិនមានទិន្នន័យវិក័យប័ត្រ!');return}var o=btn.innerHTML;btn.innerHTML='<span class="loading-spinner"></span>';btn.disabled=true;html2canvas(document.getElementById('print-area'),{backgroundColor:'#fff',scale:3,logging:false}).then(function(canvas){return new Promise(function(resolve){canvas.toBlob(function(blob){resolve(blob)},'image/png')})}).then(function(blob){var file=new File([blob],'receipt-'+d.number+'.png',{type:'image/png'});if(navigator.share&&navigator.canShare&&navigator.canShare({files:[file]})){navigator.share({files:[file],title:'Receipt',text:'Receipt '+d.number+' Total: '+F(d.total)})}else{window.open('tg://msg?text='+encodeURIComponent('Receipt '+d.number+'\nTotal: '+F(d.total)),'_blank')}}).catch(function(){window.open('tg://msg?text='+encodeURIComponent('Receipt '+d.number),'_blank')}).finally(function(){btn.innerHTML=o;btn.disabled=false})};
+
+    // ============ BUILD PAGES ============
+    function BDP(){document.getElementById('delivery-page').innerHTML=`<div class="delivery-card" id="deliveryCardContent"><div class="delivery-title"><h2>THANK YOU</h2><span>for your order</span></div><div class="delivery-row"><label><i class="fas fa-user"></i> ឈ្មោះអ្នកផ្ញើ</label><input type="text" id="senderName" placeholder="បញ្ចូលឈ្មោះ" oninput="SVD()"></div><div class="delivery-row"><label><i class="fas fa-user-tag"></i> អតិថិជន</label><input type="text" id="customerName" placeholder="ឈ្មោះអតិថិជន" oninput="SVD()"></div><div class="delivery-row"><label><i class="fas fa-phone-alt"></i> លេខទទួល</label><input type="text" id="phoneNumber" placeholder="លេខទូរស័ព្ទ" oninput="SVD()"></div><div class="delivery-row"><label><i class="fas fa-map-marker-alt"></i> ទីតាំង</label><input type="text" id="location" placeholder="អាសយដ្ឋាន" oninput="SVD()"></div><div class="delivery-row"><label><i class="fas fa-box"></i> លេខអីវ៉ាន់</label><input type="text" id="packageId" placeholder="លេខកញ្ចប់" oninput="SVD()"></div><div class="delivery-row"><label><i class="fas fa-dollar-sign"></i> តម្លៃសរុប</label><input type="text" id="totalPrice" placeholder="0.00" style="text-align:right;font-weight:600" oninput="SVD()"><span style="font-weight:700;color:#2563eb;margin-left:4px">៛</span></div><div style="display:flex;flex-wrap:wrap;gap:16px;margin:16px 0;background:#f8fafc;border-radius:14px;padding:16px"><div style="flex:1;min-width:200px"><label class="option-label"><input type="checkbox" class="payment-check" onchange="SVD()"> ABA / Acleda</label><label class="option-label"><input type="checkbox" class="payment-check" onchange="SVD()"> Wing / TrueMoney</label><label class="option-label"><input type="checkbox" class="payment-check" onchange="SVD()"> Cash On Delivery</label><label class="option-label"><input type="checkbox" class="payment-check" onchange="SVD()"> Other</label></div><div style="flex:1;min-width:200px"><label class="option-label"><input type="checkbox" class="shipping-check" onchange="SVD()"> វីរៈប៊ុនថាំ</label><label class="option-label"><input type="checkbox" class="shipping-check" onchange="SVD()"> ភ្នំពេញថ្មី</label><label class="option-label"><input type="checkbox" class="shipping-check" onchange="SVD()"> J&T Express</label><label class="option-label"><input type="checkbox" class="shipping-check" onchange="SVD()"> បោះដុំ</label></div></div><div style="display:flex;align-items:center;justify-content:space-between;border-top:2px dashed #e2e8f0;padding-top:14px;flex-wrap:wrap;gap:8px"><div style="display:flex;gap:8px"><div style="text-align:center;padding:6px 10px;border:1px solid #e2e8f0;border-radius:10px;font-size:10px"><i class="fas fa-wine-bottle" style="color:#c2410c;font-size:18px"></i><br>FRAGILE</div><div style="text-align:center;padding:6px 10px;border:1px solid #e2e8f0;border-radius:10px;font-size:10px"><i class="fas fa-hand-paper" style="color:#c2410c;font-size:18px"></i><br>HANDLE CARE</div><div style="text-align:center;padding:6px 10px;border:1px solid #e2e8f0;border-radius:10px;font-size:10px"><i class="fas fa-umbrella" style="color:#c2410c;font-size:18px"></i><br>KEEP DRY</div></div><div style="background:#fef2f2;border:2px solid #dc2626;border-radius:20px;padding:8px 16px;font-weight:700;color:#dc2626;font-size:12px"><i class="fas fa-exclamation-triangle"></i> ប្រយ័ត្នបែក ឬ សើម</div></div></div><div style="display:flex;gap:10px;margin-top:16px" class="no-print"><button class="btn btn-white" style="flex:1;padding:12px;border-radius:25px" onclick="clearDeliveryForm()"><i class="fas fa-undo-alt"></i> សម្អាត</button><button class="btn btn-blue" style="flex:1;padding:12px;border-radius:25px" onclick="printDelivery()"><i class="fas fa-print"></i> បោះពុម្ព</button></div><div style="margin-top:8px" class="no-print"><button class="btn btn-telegram" style="width:100%;padding:12px;border-radius:25px" id="delivery-telegram-btn" onclick="shareDeliveryTelegram()"><i class="fab fa-telegram-plane"></i> Share to Telegram</button></div>`;setTimeout(LDD,200)}
+
+    function BSP(){document.getElementById('dashboard-page').innerHTML=`<div class="stat-row"><div class="stat-card"><div class="stat-icon"><i class="fas fa-dollar-sign"></i></div><div><div class="stat-value" id="dash-total-amount">0៛</div><div class="stat-label">សរុបទឹកប្រាក់</div></div></div><div class="stat-card"><div class="stat-icon"><i class="fas fa-receipt"></i></div><div><div class="stat-value" id="dash-total-receipts">0</div><div class="stat-label">វិក័យប័ត្រសរុប</div></div></div><div class="stat-card"><div class="stat-icon"><i class="fas fa-users"></i></div><div><div class="stat-value" id="dash-total-customers">0</div><div class="stat-label">អតិថិជនសរុប</div></div></div><div class="stat-card"><div class="stat-icon"><i class="fas fa-chart-line"></i></div><div><div class="stat-value" id="dash-avg-daily">0៛</div><div class="stat-label">មធ្យម/ថ្ងៃ</div></div></div></div><div class="card"><h3 style="font-size:16px;font-weight:700;margin-bottom:14px"><i class="fas fa-chart-bar" style="color:#3b82f6"></i> ក្រាបការលក់ 7 ថ្ងៃ</h3><div id="sales-graph" style="display:flex;align-items:flex-end;gap:8px;height:140px;padding:0 5px"></div></div><div class="card"><h3 style="font-size:16px;font-weight:700;margin-bottom:14px"><i class="fas fa-users" style="color:#3b82f6"></i> ក្រាបអតិថិជន 7 ថ្ងៃ</h3><div id="customer-graph" style="display:flex;align-items:flex-end;gap:8px;height:140px;padding:0 5px"></div></div>`}
+    function BLP(){document.getElementById('login-device-page').innerHTML=`<div class="card"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px"><h3 style="font-size:16px;font-weight:700"><i class="fas fa-laptop" style="color:#3b82f6"></i> LOGIN DEVICE</h3></div><div class="stat-row"><div class="stat-card"><div class="stat-icon"><i class="fas fa-user-shield"></i></div><div><div class="stat-value" id="ld-admin-devices">0</div><div class="stat-label">Admin Online</div></div></div><div class="stat-card"><div class="stat-icon"><i class="fas fa-user"></i></div><div><div class="stat-value" id="ld-cashier-devices">0</div><div class="stat-label">Cashier Online</div></div></div><div class="stat-card"><div class="stat-icon"><i class="fas fa-desktop"></i></div><div><div class="stat-value" id="ld-total-devices">0</div><div class="stat-label">Total Online</div></div></div><div class="stat-card"><div class="stat-icon"><i class="fas fa-robot"></i></div><div><div class="stat-value" style="color:#22c55e">🟢 Active</div><div class="stat-label">AI Monitor</div></div></div></div><div style="overflow-x:auto"><table class="table"><thead><tr><th>#</th><th>ពេលវេលា</th><th>ឈ្មោះ</th><th>តួនាទី</th><th>សកម្មភាព</th><th>Machine ID</th><th>AI</th><th>លុប</th></tr></thead><tbody id="login-history-table-body"><tr><td colspan="8" style="text-align:center;padding:15px;color:#94a3b8">មិនទាន់មានប្រវត្តិ</td></tr></tbody></table></div></div>`}
+    function BHP(){document.getElementById('history-page').innerHTML=`<div class="card"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px"><h3 style="font-size:16px;font-weight:700"><i class="fas fa-history" style="color:#3b82f6"></i> ប្រវត្តិលក់ទាំងអស់</h3><button class="btn btn-red" onclick="clearSalesHistory()"><i class="fas fa-trash-alt"></i> លុបទាំងអស់</button></div><div id="history-list" style="max-height:400px;overflow-y:auto"></div></div>`}
+
+    window.SVD=function(){let d={senderName:document.getElementById('senderName')?.value?.trim()||'',customerName:document.getElementById('customerName')?.value?.trim()||'',phone:document.getElementById('phoneNumber')?.value?.trim()||'',location:document.getElementById('location')?.value?.trim()||'',packageId:document.getElementById('packageId')?.value?.trim()||'',totalPrice:document.getElementById('totalPrice')?.value?.trim()||'',pm:[],sm:[]};document.querySelectorAll('.payment-check').forEach(c=>{if(c.checked)d.pm.push(c.parentElement.textContent.trim())});document.querySelectorAll('.shipping-check').forEach(c=>{if(c.checked)d.sm.push(c.parentElement.textContent.trim())});localStorage.setItem(LK('dn'),JSON.stringify(d))};
+    window.clearDeliveryForm=function(){['senderName','customerName','phoneNumber','location','packageId','totalPrice'].forEach(id=>{let e=document.getElementById(id);if(e)e.value=''});document.querySelectorAll('.payment-check,.shipping-check').forEach(c=>c.checked=!1);localStorage.removeItem(LK('dn'));notify('ទម្រង់ត្រូវបានសម្អាត!')};
+    window.printDelivery=function(){SVD();SP('delivery-page',document.querySelector('[data-page=delivery-page]'));setTimeout(()=>window.print(),300)};
+
+    window.shareDeliveryTelegram = function() {
+        var btn = document.getElementById('delivery-telegram-btn');if (!btn) return;SVD();
+        var o = btn.innerHTML;btn.innerHTML = '<span class="loading-spinner"></span>';btn.disabled = true;
+        var dc = document.getElementById('deliveryCardContent');
+        var fields = {senderName:'ឈ្មោះអ្នកផ្ញើ',customerName:'អតិថិជន',phoneNumber:'លេខទូរស័ព្ទ',location:'ទីតាំង',packageId:'លេខអីវ៉ាន់',totalPrice:'តម្លៃសរុប'};
+        var savedInputs = [];
+        Object.keys(fields).forEach(function(id){var input=document.getElementById(id);if(input){savedInputs.push({id:id,element:input,parent:input.parentElement,value:input.value,placeholder:input.placeholder,style:input.getAttribute('style')||'',oninput:input.getAttribute('oninput')||''});var displayDiv=document.createElement('div');var displayValue=input.value||input.placeholder||'-';displayDiv.textContent=displayValue;displayDiv.style.cssText='flex:1;padding:10px 6px;font-size:14px;font-weight:500;color:'+(input.value?'#1e293b':'#94a3b8')+';font-style:'+(input.value?'normal':'italic')+';word-break:break-all;white-space:pre-wrap;';input.parentElement.replaceChild(displayDiv,input);}});
+        var ow=dc.style.width,obs=dc.style.boxShadow,obr=dc.style.borderRadius,op=dc.style.padding,omw=dc.style.maxWidth;
+        dc.style.width='550px';dc.style.maxWidth='550px';dc.style.boxShadow='none';dc.style.borderRadius='12px';dc.style.padding='30px 24px';dc.style.background='#ffffff';
+        var actionButtons=dc.parentElement.querySelectorAll('.no-print');var hiddenButtons=[];actionButtons.forEach(function(el){hiddenButtons.push({element:el,display:el.style.display});el.style.display='none';});
+        html2canvas(dc,{backgroundColor:'#ffffff',scale:3,useCORS:true,logging:false,allowTaint:true,windowWidth:600}).then(function(canvas){
+            dc.style.width=ow;dc.style.maxWidth=omw;dc.style.boxShadow=obs;dc.style.borderRadius=obr;dc.style.padding=op;
+            hiddenButtons.forEach(function(item){item.element.style.display=item.display;});
+            var currentDivs=dc.querySelectorAll('div');savedInputs.forEach(function(saved){for(var j=0;j<currentDivs.length;j++){var div=currentDivs[j];if(div.parentElement===saved.parent||div.textContent===saved.value||div.textContent===saved.placeholder){try{div.parentElement.replaceChild(saved.element,div);saved.element.setAttribute('style',saved.style);saved.element.setAttribute('oninput',saved.oninput);saved.element.value=saved.value}catch(e){}break}}});
+            return new Promise(function(resolve){canvas.toBlob(function(blob){resolve(blob)},'image/png',1.0);});
+        }).then(function(blob){var file=new File([blob],'delivery-note.png',{type:'image/png'});var d=JSON.parse(localStorage.getItem(LK('dn'))||'{}');var cap='📦 Delivery Note';if(d.customerName)cap+=' - '+d.customerName;if(d.totalPrice)cap+='\n💰 Total: '+d.totalPrice+'៛';if(navigator.share&&navigator.canShare&&navigator.canShare({files:[file]})){navigator.share({files:[file],title:'Delivery Note',text:cap})}else{window.open('tg://msg?text='+encodeURIComponent(cap),'_blank')}}).catch(function(){window.open('tg://msg?text='+encodeURIComponent('📦 Delivery Note'),'_blank')}).finally(function(){btn.innerHTML=o;btn.disabled=false;});
+    };
+
+    function LDD(){try{let d=JSON.parse(localStorage.getItem(LK('dn')));if(!d)return;let f={senderName:'senderName',customerName:'customerName',phone:'phoneNumber',location:'location',packageId:'packageId',totalPrice:'totalPrice'};Object.entries(f).forEach(([k,id])=>{let e=document.getElementById(id);if(e&&d[k])e.value=d[k]})}catch(e){}}
+
+    function UL(){if(currentUser?.role!=='admin')return;let as={};loginHistory.forEach(r=>{if(!as[r.machineId])as[r.machineId]={la:'',role:'',un:''};as[r.machineId].la=r.action;as[r.machineId].role=r.role;as[r.machineId].un=r.username});let ac=0,cc=0;Object.values(as).forEach(s=>{if(s.la==='login'){if(s.role==='admin')ac++;else cc++}});document.getElementById('ld-admin-devices').innerText=ac;document.getElementById('ld-cashier-devices').innerText=cc;document.getElementById('ld-total-devices').innerText=ac+cc;let tb=document.getElementById('login-history-table-body');if(loginHistory.length===0){tb.innerHTML='<tr><td colspan="8" style="text-align:center;padding:15px;color:#94a3b8">មិនទាន់មានប្រវត្តិ</td></tr>';return}let rv=[...loginHistory].reverse();tb.innerHTML=rv.map((r,i)=>{let on=r.action==='login';let ac=on?'#22c55e':'#ef4444';let ai=on?'fa-sign-in-alt':'fa-sign-out-alt';let at=on?'ចូលប្រើ':'ចាកចេញ';let rb=r.role==='admin'?'<span style="background:#eff6ff;color:#2563eb;padding:2px 6px;border-radius:12px;font-size:9px">Admin</span>':'<span style="background:#f0fdf4;color:#16a34a;padding:2px 6px;border-radius:12px;font-size:9px">Cashier</span>';let aa=on?'🔍 កំពុងតាមដាន':'📋 បានចាកចេញ';return`<tr><td>${i+1}</td><td style="font-size:10px">${r.time}</td><td><strong>${r.username}</strong> ${on?'<span style="color:#22c55e">🟢</span>':'<span style="color:#94a3b8">⚫</span>'}</td><td>${rb}</td><td><span style="color:${ac}"><i class="fas ${ai}"></i> ${at}</span></td><td><code style="background:#f1f5f9;padding:2px 5px;border-radius:3px;font-size:9px">${r.machineId}</code></td><td style="font-size:9px">${aa}</td><td><button class="btn btn-red" style="padding:3px 6px;font-size:8px" onclick="deleteLoginRecord(${i})"><i class="fas fa-times"></i></button></td></tr>`}).join('')}
+    window.deleteLoginRecord=function(i){loginHistory.splice(i,1);LS();notify('បានលុបប្រវត្តិនេះ!');UL()};
+
+    function UH(){let c=document.getElementById('history-list');if(!c)return;if(salesHistory.length===0){c.innerHTML='<div style="text-align:center;padding:35px;color:#94a3b8;font-size:13px">មិនទាន់មានប្រវត្តិលក់</div>';return}c.innerHTML=salesHistory.map((s,i)=>{let items=(s.items||[]).map(i=>i.qty+'×'+i.name).join(', ');return`<div style="background:#fff;border-radius:12px;padding:14px;margin-bottom:8px;border:1px solid #f1f5f9;transition:.3s"><div style="display:flex;justify-content:space-between;margin-bottom:6px"><div><strong style="color:#2563eb">#${s.id}</strong><br><span style="font-size:10px;color:#94a3b8">${s.time||''} | 🖥️ ${s.machine||'Unknown'}</span></div><span style="font-size:20px;font-weight:900">${F(s.total||0)}</span></div><div style="background:#f8fafc;padding:10px;border-radius:8px;margin-bottom:6px;font-size:12px">${items}</div><div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;text-align:center;font-size:10px"><div style="background:#eff6ff;padding:6px;border-radius:6px">សរុប<br><strong>${F(s.total||0)}</strong></div><div style="background:#f0fdf4;padding:6px;border-radius:6px">ទទួល<br><strong>${F(s.received||0)}</strong></div><div style="background:#fff7ed;padding:6px;border-radius:6px">អាប់<br><strong>${F(s.change||0)}</strong></div></div><button class="btn btn-red" style="margin-top:8px;padding:4px 8px;font-size:9px" onclick="deleteSaleRecord(${i})"><i class="fas fa-trash-alt"></i> លុប</button></div>`}).join('')}
+    window.deleteSaleRecord=function(i){salesHistory.splice(i,1);LS();UH();notify('បានលុបប្រវត្តិលក់នេះ!')};
+    window.clearSalesHistory=function(){if(confirm('លុបប្រវត្តិលក់ទាំងអស់?')){salesHistory=[];totalSalesToday=0;customerData={};LS();RU();UH();notify('ប្រវត្តិទាំងអស់ត្រូវបានលុប!')}};
+
+    function UD(){if(currentUser?.role!=='admin')return;let ta=salesHistory.reduce((s,r)=>s+(r.total||0),0);let tc=Object.values(customerData).reduce((s,c)=>s+c,0);let dc=Object.keys(customerData).length||1;document.getElementById('dash-total-amount').innerText=F(ta);document.getElementById('dash-total-receipts').innerText=salesHistory.length;document.getElementById('dash-total-customers').innerText=tc;document.getElementById('dash-avg-daily').innerText=F(Math.round(ta/dc));let days=[];for(let i=6;i>=0;i--){let d=new Date();d.setDate(d.getDate()-i);let k=d.toISOString().split('T')[0];let l=d.toLocaleDateString('km-KH',{weekday:'short',day:'numeric'});days.push({key:k,label:l,sales:salesHistory.filter(s=>s.time&&s.time.startsWith(k)).reduce((a,b)=>a+(b.total||0),0),customers:customerData[k]||0})}let ms=Math.max(...days.map(d=>d.sales),1);let sg=document.getElementById('sales-graph');if(sg)sg.innerHTML=days.map(d=>`<div style="flex:1;text-align:center"><div style="font-size:9px;font-weight:700">${F(d.sales)}</div><div class="graph-bar" style="height:${Math.max((d.sales/ms)*100,2)}px"></div><div style="font-size:9px;color:#94a3b8;margin-top:3px">${d.label}</div></div>`).join('');let mc=Math.max(...days.map(d=>d.customers),1);let cg=document.getElementById('customer-graph');if(cg)cg.innerHTML=days.map(d=>`<div style="flex:1;text-align:center"><div style="font-size:9px;font-weight:700">${d.customers}</div><div class="graph-bar" style="height:${Math.max((d.customers/mc)*100,2)}px"></div><div style="font-size:9px;color:#94a3b8;margin-top:3px">${d.label}</div></div>`).join('')}
+
+    window.toggleDarkMode=function(){isDark=!isDark;LS();AT()};
+    function AT(){if(isDark){document.body.classList.add('dark-mode');let icon=document.getElementById('themeIcon');if(icon)icon.className='fas fa-sun'}else{document.body.classList.remove('dark-mode');let icon=document.getElementById('themeIcon');if(icon)icon.className='fas fa-moon'}}
+
+    async function loadFromCloud(){try{const r=await fetch(JSONBIN_URL+'/latest',{headers:{'X-Master-Key':JSONBIN_API_KEY,'X-Bin-Meta':'false'}});const data=(await r.json()).record;totalSalesToday=data.totalSalesToday||0;salesHistory=data.salesHistory||[];loginHistory=data.loginHistory||[];customerData=data.customerData||{};RU();if(currentUser?.role==='admin'){UL();if(document.getElementById('dashboard-page').classList.contains('active'))UD();if(document.getElementById('history-page').classList.contains('active'))UH()}}catch(e){}}
+    async function saveToCloud(){try{await fetch(JSONBIN_URL,{method:'PUT',headers:{'Content-Type':'application/json','X-Master-Key':JSONBIN_API_KEY,'X-Bin-Versioning':'false'},body:JSON.stringify({totalSalesToday,salesHistory,loginHistory,customerData})})}catch(e){}}
+    setInterval(()=>{if(currentUser)loadFromCloud()},3000);
+    setInterval(()=>{if(currentUser)saveToCloud()},3000);
+
+    document.getElementById('login-password').addEventListener('keypress',function(e){if(e.key==='Enter')handleLogin()});
+    document.addEventListener('keydown',e=>{if(!currentUser){if(e.key==='Enter')handleLogin();return}if(e.ctrlKey||e.metaKey){switch(e.key){case'1':e.preventDefault();SP('pos-page',document.querySelector('[data-page=pos-page]'));break;case'2':e.preventDefault();SP('delivery-page',document.querySelector('[data-page=delivery-page]'));break;case'3':if(currentUser.role==='admin'){e.preventDefault();SP('dashboard-page',document.querySelector('[data-page=dashboard-page]'));UD()}break;case'4':if(currentUser.role==='admin'){e.preventDefault();SP('login-device-page',document.querySelector('[data-page=login-device-page]'));UL()}break;case'5':if(currentUser.role==='admin'){e.preventDefault();SP('history-page',document.querySelector('[data-page=history-page]'));UH()}break}}});
+    document.getElementById('mobileMenuBtn').style.display=window.innerWidth<=1024?'flex':'none';
+    window.addEventListener('resize',()=>{document.getElementById('mobileMenuBtn').style.display=window.innerWidth<=1024?'flex':'none';if(window.innerWidth>1024)closeSidebar()});
+    IA();
+    </script>
+</body>
+</html>
